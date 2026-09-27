@@ -6,14 +6,14 @@ import taichi.math as tm
 ti.init(arch=ti.gpu)
 
 # Количество частиц
-N = 1_500_000
+N = 1_000_000
 
 N_BULGE = int(N * 0.20)          # плотное ядро
 N_ARMS  = int(N * 0.55)          # рукава
 N_DISK  = N - N_BULGE - N_ARMS   # размытый диск между рукавами
 
-STRETCH_X = 1.5     # растяжение Галактики вдоль X
-STRETCH_Z = 0.85    # сжатие вдоль Z
+STRETCH_X = 1.3     # растяжение Галактики вдоль X
+STRETCH_Z = 0.9    # сжатие вдоль Z
 
 # Позиции частиц: 1D поле из 3D-векторов
 pos = ti.Vector.field(3, dtype=ti.f32, shape=N)
@@ -51,7 +51,7 @@ def init_particles():
     # Балдж
     for i in range(N_BULGE):
         # плотнее к центру, но с длинным хвостом наружу
-        r = 0.12 * ti.pow(ti.random(), 0.9)
+        r = 0.15 * ti.pow(ti.random(), 1.5)
         d = random_dir()
         pos[i] = tm.vec3(d.x * r * 2 , d.y * r * 1.2, d.z * r * 1.0)
         color[i] = star_color(r) * 2.7
@@ -59,7 +59,7 @@ def init_particles():
     # Рукава
     for i in range(N_ARMS):
         idx = N_BULGE + i
-        r = 0.10 + 0.90 * ti.pow(ti.random(), 3.8)
+        r = 0.10 + 0.90 * ti.pow(ti.random(), 2.2)
         # 4 рукава
         arm_id = 0
         arm_raw = ti.random()
@@ -90,7 +90,7 @@ def init_particles():
     # Размытый диск между рукавами
     for i in range(N_DISK):
         idx = N_BULGE + N_ARMS + i
-        r = 0.10 + 0.90 * ti.pow(ti.random(), 1.3)
+        r = 0.10 + 0.90 * ti.pow(ti.random(), 3.0)
         # угол — равномерный по всему диску, без привязки к рукавам
         theta = ti.random() * 2 * tm.pi
         theta += 0.4 * tm.sin(2 * theta + 4.0 * r)
