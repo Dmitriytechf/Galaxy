@@ -5,7 +5,7 @@ import taichi.math as tm
 ti.init(arch=ti.gpu)
 
 # Количество частиц
-N = 1_000_000
+N = 1_500_000
 
 # Позиции частиц: 1D поле из 3D-векторов
 pos = ti.Vector.field(3, dtype=ti.f32, shape=N)
